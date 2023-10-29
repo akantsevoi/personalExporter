@@ -67,8 +67,9 @@ func reportKeys(props []Properties) ([]string, map[string]int) {
 		kToProps[p.ReportKey] = p.DoneTotal
 
 		for _, k := range sortedKeys(p.Done) {
-			keys = append(keys, k)
-			kToProps[k] = p.Done[k]
+			composedKey := p.ReportKey + ":" + k
+			keys = append(keys, composedKey)
+			kToProps[composedKey] = p.Done[k]
 		}
 	}
 
@@ -118,6 +119,9 @@ func updateOriginal(date string, properties []Properties, original [][]string) [
 	}
 
 	newReportRow := make([]string, totalColumns)
+	for i := range newReportRow {
+		newReportRow[i] = "0"
+	}
 	newReportRow[0] = date
 
 	for _, k := range keysToReport {
@@ -125,6 +129,7 @@ func updateOriginal(date string, properties []Properties, original [][]string) [
 		if !ok {
 			index = len(existingKeys)
 			existingKeys[k] = index
+			original[0] = append(original[0], k)
 		}
 		newReportRow[index] = strconv.Itoa(dataToReport[k])
 	}
@@ -138,7 +143,7 @@ func updateOriginal(date string, properties []Properties, original [][]string) [
 		}
 	}
 
-	return nil
+	return append(original, newReportRow)
 }
 
 // func createReportRow(date string, properties []Properties) []string {
