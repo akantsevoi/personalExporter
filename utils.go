@@ -5,10 +5,9 @@ import (
 	"os"
 )
 
-func stopIfErrf(format string, err error, a ...any) {
+func stopIfErrf(format string, err error) {
 	if err != nil {
-		a = append(a, err)
-		fmt.Printf(format, a)
+		fmt.Printf(format, err)
 		os.Exit(1)
 	}
 }
