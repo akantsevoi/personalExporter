@@ -91,21 +91,9 @@ func existingKeys(headerRow []string) map[string]int {
 
 func updateOriginal(date string, properties []Properties, original [][]string) [][]string {
 	if len(original) == 0 {
-		csvData := [][]string{
+		original = [][]string{
 			{dateCol},
-			{date},
 		}
-		for _, r := range properties {
-			csvData[0] = append(csvData[0], r.ReportKey)
-			csvData[1] = append(csvData[1], strconv.Itoa(r.DoneTotal))
-
-			for _, k := range sortedKeys(r.Done) {
-				v := r.Done[k]
-				csvData[0] = append(csvData[0], r.ReportKey+":"+k)
-				csvData[1] = append(csvData[1], strconv.Itoa(v))
-			}
-		}
-		return csvData
 	}
 
 	existingKeys := existingKeys(original[0])
