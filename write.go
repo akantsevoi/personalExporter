@@ -14,8 +14,11 @@ const (
 )
 
 func writeCSVUpdateIfNeeded(date string, properties []Properties) {
+	fileName := "result.csv"
+	tmpFileName := "result_tmp.csv"
+
 	var newFile bool
-	if _, err := os.Stat("result.csv"); err == nil {
+	if _, err := os.Stat(fileName); err == nil {
 		newFile = false
 	} else if errors.Is(err, os.ErrNotExist) {
 		newFile = true
@@ -25,23 +28,36 @@ func writeCSVUpdateIfNeeded(date string, properties []Properties) {
 		// But ok here
 	}
 
-	file, err := os.OpenFile("result.csv", os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
-	stopIfErrf("open csv file error: %w", err)
-	defer file.Close()
-
 	var fileContent [][]string
-	if !newFile {
-		reader := csv.NewReader(file)
+	var file *os.File
+	var originalFile *os.File
+
+	if newFile {
+		var err error
+		file, err = os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+		stopIfErrf("create csv file error: %w", err)
+	} else {
+		var err error
+		originalFile, err = os.OpenFile(fileName, os.O_RDONLY|os.O_CREATE|os.O_APPEND, 0644)
+		stopIfErrf("open originalfile err: %w", err)
+		file, err = os.OpenFile(tmpFileName, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
+		stopIfErrf("open csv file error: %w", err)
+		reader := csv.NewReader(originalFile)
 		fileContent, err = reader.ReadAll()
-		stopIfErrf("read csv line:%v %w", err, err.Error())
+		stopIfErrf("read csv line: %w", err)
+
+		originalFile.Close()
 	}
 
 	newContent := updateOriginal(date, properties, fileContent)
 
 	writer := csv.NewWriter(file)
-	defer writer.Flush()
-
 	writer.WriteAll(newContent)
+	writer.Flush()
+	file.Close()
+
+	stopIfErrf("remove originalFile: %w", os.Remove(fileName))
+	stopIfErrf("remove originalFile: %w", os.Rename(tmpFileName, fileName))
 }
 
 func sortedKeys(m map[string]int) []string {
@@ -133,7 +149,3 @@ func updateOriginal(date string, properties []Properties, original [][]string) [
 
 	return append(original, newReportRow)
 }
-
-// func createReportRow(date string, properties []Properties) []string {
-// 	return nil
-// }
