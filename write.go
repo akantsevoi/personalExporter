@@ -15,8 +15,8 @@ const (
 
 func writeCSVUpdateIfNeeded(date string, properties []Properties) {
 
-	fileName := folderPath + "result.csv"
-	tmpFileName := folderPath + "result_tmp.csv"
+	fileName := writeFolderPath + "result.csv"
+	tmpFileName := writeFolderPath + "result_tmp.csv"
 
 	var newFile bool
 	if _, err := os.Stat(fileName); err == nil {

@@ -11,8 +11,9 @@ import (
 )
 
 const (
-	folderPath     = ""
-	hoursPerTomato = float64(0.5)
+	folderPath      = ""
+	writeFolderPath = ""
+	hoursPerTomato  = float64(0.5)
 )
 
 func main() {
