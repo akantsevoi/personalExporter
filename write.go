@@ -50,15 +50,17 @@ func writeCSVUpdateIfNeeded(date string, properties []Properties) {
 		originalFile.Close()
 	}
 
-	newContent := updateOriginal(date, properties, fileContent)
+	newContent := updateOriginal(date, hoursPerTomato, properties, fileContent)
 
 	writer := csv.NewWriter(file)
 	writer.WriteAll(newContent)
 	writer.Flush()
 	file.Close()
 
-	stopIfErrf("remove originalFile: %w", os.Remove(fileName))
-	stopIfErrf("remove originalFile: %w", os.Rename(tmpFileName, fileName))
+	if !newFile {
+		stopIfErrf("remove originalFile: %w", os.Remove(fileName))
+		stopIfErrf("rename tmp: %w", os.Rename(tmpFileName, fileName))
+	}
 }
 
 func sortedKeys(m map[string]int) []string {
@@ -106,7 +108,7 @@ func existingKeys(headerRow []string) map[string]int {
 	return keys
 }
 
-func updateOriginal(date string, properties []Properties, original [][]string) [][]string {
+func updateOriginal(date string, hoursPerTomato float64, properties []Properties, original [][]string) [][]string {
 	if len(original) == 0 {
 		original = [][]string{
 			{dateCol},
@@ -136,7 +138,8 @@ func updateOriginal(date string, properties []Properties, original [][]string) [
 			existingKeys[k] = index
 			original[0] = append(original[0], k)
 		}
-		newReportRow[index] = strconv.Itoa(dataToReport[k])
+
+		newReportRow[index] = strconv.FormatFloat(float64(dataToReport[k])*hoursPerTomato, 'f', 1, 64)
 	}
 
 	// looking for an already existing raw

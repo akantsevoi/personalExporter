@@ -10,7 +10,10 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
-const folderPath = ""
+const (
+	folderPath     = ""
+	hoursPerTomato = float64(0.5)
+)
 
 func main() {
 	var todayResults []Properties
@@ -40,6 +43,7 @@ func main() {
 	writeCSVUpdateIfNeeded(time.Now().Format("2006-01-02"), todayResults)
 }
 
+// I report everything in tomatoes, and the time per tomato may wary
 type Properties struct {
 	ReportKey      string
 	TomatoesPerDay int
