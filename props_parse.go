@@ -34,9 +34,17 @@ func mapToProperties(input map[string]string) *Properties {
 			// log.Printf("%v %T %v\n", k, v, v)
 
 			increment := toInt(v)
+			if increment == 0 {
+				continue
+			}
 			pr.DoneTotal += increment
 			pr.Done[name] = increment
+
 		}
+	}
+
+	if pr.DoneTotal == 0 {
+		return nil
 	}
 
 	return &pr

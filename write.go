@@ -127,7 +127,7 @@ func updateOriginal(date string, hoursPerTomato float64, properties []Properties
 
 	newReportRow := make([]string, totalColumns)
 	for i := range newReportRow {
-		newReportRow[i] = "0"
+		newReportRow[i] = "0.0"
 	}
 	newReportRow[0] = date
 
