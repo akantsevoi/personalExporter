@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -10,13 +11,32 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
-const (
+var (
 	folderPath      = ""
 	writeFolderPath = ""
-	hoursPerTomato  = float64(0.5)
+	hoursPerTomato  = float64(0.0)
 )
 
 func main() {
+
+	sourcePath := flag.String("source", "", "path to the root folder of projects")
+	hoursPT := flag.Float64("hpert", 1.0, "hours per reported tomato")
+	writeFolder := flag.String("result", "", "where to save the result\nIf empty - it will be stored in the same folder as source")
+
+	flag.Parse()
+
+	if len(*writeFolder) == 0 {
+		writeFolder = sourcePath
+	}
+
+	fmt.Println(*sourcePath)
+	fmt.Println(*writeFolder)
+	fmt.Println(*hoursPT)
+
+	folderPath = *sourcePath
+	writeFolderPath = *writeFolder
+	hoursPerTomato = *hoursPT
+
 	var todayResults []Properties
 	err := filepath.Walk(folderPath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
