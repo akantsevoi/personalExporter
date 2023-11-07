@@ -81,6 +81,10 @@ func extractFrontmatterProperties(filePath string) (*Properties, error) {
 	}
 
 	content := string(data)
+	// Check if has FrontMatter delimiter
+	if !strings.HasPrefix(content, "---") {
+		return nil, nil
+	}
 	lines := strings.SplitN(content, "---", 3) // Split at the frontmatter delimiters
 
 	if len(lines) < 3 {

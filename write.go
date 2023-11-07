@@ -45,7 +45,7 @@ func writeCSVUpdateIfNeeded(date string, properties []Properties) {
 		stopIfErrf("open csv file error: %w", err)
 		reader := csv.NewReader(originalFile)
 		fileContent, err = reader.ReadAll()
-		stopIfErrf("read csv line: %w", err)
+		stopIfErrf("read csv lines: %#v", err)
 
 		originalFile.Close()
 	}
