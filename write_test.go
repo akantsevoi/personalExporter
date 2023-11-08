@@ -36,7 +36,7 @@ func TestUpdateOriginal(t *testing.T) {
 			exp: [][]string{
 				{"date", "key1", "key3", "key3:sub1", "key3:sub2", "key3:sub3", "key2", "key2:sub1"},
 				{"2043-12-03", "4"},
-				{"2043-12-04", "0", "4.0", "3.0", "0.0", "1.0", "2.0", "2.0"},
+				{"2043-12-04", "0.0", "4.0", "3.0", "0.0", "1.0", "2.0", "2.0"},
 			},
 		},
 		{
@@ -55,7 +55,7 @@ func TestUpdateOriginal(t *testing.T) {
 			},
 			exp: [][]string{
 				{"date", "key1", "key2", "key2:sub1", "key2:sub2"},
-				{"2043-12-04", "0", "2.0", "1.0", "1.0"},
+				{"2043-12-04", "0.0", "2.0", "1.0", "1.0"},
 			},
 		},
 		{
@@ -71,7 +71,7 @@ func TestUpdateOriginal(t *testing.T) {
 			},
 			exp: [][]string{
 				{"date", "key1", "key2"},
-				{"2043-12-04", "0", "2.0"},
+				{"2043-12-04", "0.0", "2.0"},
 			},
 		},
 		{
