@@ -11,3 +11,7 @@ func stopIfErrf(format string, err error) {
 		os.Exit(1)
 	}
 }
+
+func ptr[T any](v T) *T {
+	return &v
+}
