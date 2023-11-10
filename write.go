@@ -23,10 +23,6 @@ func writeCSVUpdateIfNeeded(date string, properties []Properties) {
 		newFile = false
 	} else if errors.Is(err, os.ErrNotExist) {
 		newFile = true
-	} else {
-		// Schrodinger: file may or may not exist. See err for details.
-		// Therefore, do *NOT* use !os.IsNotExist(err) to test for file existence
-		// But ok here
 	}
 
 	var fileContent [][]string

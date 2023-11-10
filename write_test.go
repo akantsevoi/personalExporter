@@ -1,6 +1,8 @@
 package main
 
 import (
+	"errors"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -147,4 +149,46 @@ func TestUpdateOriginal(t *testing.T) {
 			require.Equal(t, c.exp, res)
 		})
 	}
+}
+
+func TestWriteCSVUpdate(t *testing.T) {
+	testFolderPath := "tmp_test_path/"
+
+	hoursPerTomato = 0.5
+	writeFolderPath = testFolderPath
+
+	_, err := os.Stat(testFolderPath)
+	if !errors.Is(err, os.ErrNotExist) {
+		err := os.RemoveAll(testFolderPath)
+		require.NoError(t, err)
+	}
+
+	err = os.Mkdir(testFolderPath, os.FileMode(0755))
+	require.NoError(t, err)
+
+	t.Run("create_new_result", func(t *testing.T) {
+		// basic_export.csv.golden
+		writeCSVUpdateIfNeeded("2023-04-22", []Properties{
+			{ReportKey: "repKey1", DoneTotal: 10},
+			{ReportKey: "repKey2", DoneTotal: 1},
+		})
+
+		result := helperFileContent(t, testFolderPath+"result.csv")
+		want := helperFileContent(t, "test_files/basic_export.csv.golden")
+		require.Equal(t, want, result)
+
+	})
+
+	t.Run("clean_up", func(t *testing.T) {
+		err := os.RemoveAll(testFolderPath)
+		require.NoError(t, err)
+	})
+}
+
+func helperFileContent(t *testing.T, path string) string {
+	content, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("Error loading golden file: %s", err)
+	}
+	return string(content)
 }
