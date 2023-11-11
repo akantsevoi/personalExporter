@@ -10,9 +10,8 @@ import (
 )
 
 var (
-	folderPath      = ""
-	writeFolderPath = ""
-	hoursPerTomato  = float64(0.0)
+	folderPath     = ""
+	hoursPerTomato = float64(0.0)
 )
 
 func main() {
@@ -32,32 +31,50 @@ func main() {
 	fmt.Println(*hoursPT)
 
 	folderPath = *sourcePath
-	writeFolderPath = *writeFolder
 	hoursPerTomato = *hoursPT
 
-	var todayResults []Properties
-	err := filepath.Walk(folderPath, func(path string, info os.FileInfo, err error) error {
+	// work
+	paths, err := markdownFilePaths(folderPath)
+	stopIfErrf("%w", err)
+
+	todayResults, err := extractPropsFromFiles(paths)
+	stopIfErrf("%w", err)
+
+	writeCSVUpdateIfNeeded(time.Now().Format("2006-01-02"), *writeFolder, todayResults)
+}
+
+func extractPropsFromFiles(filePaths []string) ([]Properties, error) {
+	var results []Properties
+	for _, p := range filePaths {
+		props, err := extractFrontmatterProperties(p)
+		if err != nil {
+			return nil, fmt.Errorf("extractPropsFromFiles: error parsing file %s: %w", p, err)
+		}
+		if props == nil {
+			continue
+		}
+
+		results = append(results, *props)
+	}
+	return results, nil
+}
+
+func markdownFilePaths(projectsFolder string) ([]string, error) {
+	var fileNames []string
+	err := filepath.Walk(projectsFolder, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
 
 		if !info.IsDir() && strings.HasSuffix(path, ".md") {
-			props, err := extractFrontmatterProperties(path)
-			if err != nil {
-				fmt.Printf("Error parsing file %s: %v\n", path, err)
-			}
-			if props == nil {
-				return nil
-			} else {
-				todayResults = append(todayResults, *props)
-			}
+			fileNames = append(fileNames, path)
 		}
 
 		return nil
 	})
 	if err != nil {
-		fmt.Println("Error walking the directory:", err)
+		return nil, fmt.Errorf("markdownFilePaths: error walking the directory: %w", err)
 	}
 
-	writeCSVUpdateIfNeeded(time.Now().Format("2006-01-02"), todayResults)
+	return fileNames, nil
 }

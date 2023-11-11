@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"io"
 	"os"
 	"testing"
 
@@ -155,7 +156,6 @@ func TestWriteCSVUpdate(t *testing.T) {
 	testFolderPath := "tmp_test_path/"
 
 	hoursPerTomato = 0.5
-	writeFolderPath = testFolderPath
 
 	_, err := os.Stat(testFolderPath)
 	if !errors.Is(err, os.ErrNotExist) {
@@ -168,7 +168,7 @@ func TestWriteCSVUpdate(t *testing.T) {
 
 	t.Run("create_new_result", func(t *testing.T) {
 		// basic_export.csv.golden
-		writeCSVUpdateIfNeeded("2023-04-22", []Properties{
+		writeCSVUpdateIfNeeded("2023-04-22", testFolderPath, []Properties{
 			{ReportKey: "repKey1", DoneTotal: 10},
 			{ReportKey: "repKey2", DoneTotal: 1},
 		})
@@ -176,13 +176,42 @@ func TestWriteCSVUpdate(t *testing.T) {
 		result := helperFileContent(t, testFolderPath+"result.csv")
 		want := helperFileContent(t, "test_files/basic_export.csv.golden")
 		require.Equal(t, want, result)
+	})
 
+	t.Run("add_to_existed", func(t *testing.T) {
+		copyFile(t, "test_files/existedResult.csv", testFolderPath+"result.csv")
+		writeCSVUpdateIfNeeded("2023-06-29", testFolderPath, []Properties{
+			{ReportKey: "proj1", DoneTotal: 3, Done: map[string]int{
+				"subproj":  2,
+				"subproj2": 1,
+			}},
+		})
+
+		result := helperFileContent(t, testFolderPath+"result.csv")
+		want := helperFileContent(t, "test_files/after_export_to_existed.csv.golden")
+		require.Equal(t, want, result)
 	})
 
 	t.Run("clean_up", func(t *testing.T) {
 		err := os.RemoveAll(testFolderPath)
 		require.NoError(t, err)
 	})
+}
+
+func copyFile(t *testing.T, from, to string) {
+	srcFile, err := os.Open(from)
+	require.NoError(t, err)
+	defer srcFile.Close()
+
+	destFile, err := os.Create(to)
+	require.NoError(t, err)
+	defer destFile.Close()
+
+	_, err = io.Copy(destFile, srcFile)
+	require.NoError(t, err)
+
+	err = destFile.Sync()
+	require.NoError(t, err)
 }
 
 func helperFileContent(t *testing.T, path string) string {

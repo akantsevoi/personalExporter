@@ -13,10 +13,10 @@ const (
 	dateCol = "date"
 )
 
-func writeCSVUpdateIfNeeded(date string, properties []Properties) {
+func writeCSVUpdateIfNeeded(date string, writeFolder string, properties []Properties) {
 
-	fileName := writeFolderPath + "result.csv"
-	tmpFileName := writeFolderPath + "result_tmp.csv"
+	fileName := writeFolder + "result.csv"
+	tmpFileName := writeFolder + "result_tmp.csv"
 
 	var newFile bool
 	if _, err := os.Stat(fileName); err == nil {
