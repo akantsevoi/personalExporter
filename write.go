@@ -82,6 +82,9 @@ func reportKeys(props []Properties) ([]string, map[string]int) {
 		kToProps[p.ReportKey] = p.DoneTotal
 
 		for _, k := range sortedKeys(p.Done) {
+			if p.Done[k] == 0 {
+				continue
+			}
 			composedKey := p.ReportKey + ":" + k
 			keys = append(keys, composedKey)
 			kToProps[composedKey] = p.Done[k]
