@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func Test(t *testing.T) {
+func TestExtractPropertiesFromFile(t *testing.T) {
 	for _, c := range []struct {
 		label    string
 		filePath string
@@ -25,6 +25,7 @@ func Test(t *testing.T) {
 				Done: map[string]int{
 					"myProj1": 1,
 					"myProj2": 1,
+					"other":   0,
 				},
 			},
 		},

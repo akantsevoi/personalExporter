@@ -32,9 +32,6 @@ func mapToProperties(input map[string]string) *Properties {
 			}
 
 			increment := toInt(v)
-			if increment == 0 {
-				continue
-			}
 			pr.DoneTotal += increment
 			pr.Done[name] = increment
 

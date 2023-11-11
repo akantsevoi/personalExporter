@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"io"
 	"os"
 	"testing"
@@ -30,6 +29,7 @@ func TestUpdateOriginal(t *testing.T) {
 				}},
 				{ReportKey: "key2", DoneTotal: 2, Done: map[string]int{
 					"sub1": 2,
+					"sub2": 0,
 				}},
 			},
 			fromFile: [][]string{
@@ -157,11 +157,8 @@ func TestWriteCSVUpdate(t *testing.T) {
 
 	hoursPerTomato = 0.5
 
-	_, err := os.Stat(testFolderPath)
-	if !errors.Is(err, os.ErrNotExist) {
-		err := os.RemoveAll(testFolderPath)
-		require.NoError(t, err)
-	}
+	err := os.RemoveAll(testFolderPath)
+	require.NoError(t, err)
 
 	err = os.Mkdir(testFolderPath, os.FileMode(0755))
 	require.NoError(t, err)
