@@ -11,7 +11,6 @@ import (
 )
 
 var (
-	folderPath     = ""
 	hoursPerTomato = float64(0.0)
 )
 
@@ -47,7 +46,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	folderPath = *sourcePath
+	folderPath := *sourcePath
 
 	paths, err := markdownFilePaths(folderPath)
 	stopIfErrf("%w", err)
