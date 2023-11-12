@@ -47,27 +47,30 @@ func main() {
 		os.Exit(1)
 	}
 
-	if len(*writeFolder) == 0 {
-		writeFolder = sourcePath
-	}
-
-	fmt.Println(*sourcePath)
-	fmt.Println(*writeFolder)
-	fmt.Println(*hoursPT)
-
 	folderPath = *sourcePath
-	hoursPerTomato = *hoursPT
 
 	paths, err := markdownFilePaths(folderPath)
 	stopIfErrf("%w", err)
 
 	switch command {
 	case commandReport:
+		if len(*writeFolder) == 0 {
+			writeFolder = sourcePath
+		}
+		hoursPerTomato = *hoursPT
+
+		fmt.Println("report start...")
+		fmt.Println("source:\t\t", folderPath)
+		fmt.Println("result:\t\t", *writeFolder)
+		fmt.Println("hours/tomato:\t", hoursPerTomato)
+
 		todayResults, err := extractPropsFromFiles(paths)
 		stopIfErrf("report: %w", err)
 
 		writeCSVUpdateIfNeeded(time.Now().Format("2006-01-02"), *writeFolder, todayResults)
 	case commandReset:
+		fmt.Println("reset start...")
+		fmt.Println("project files:\t", folderPath)
 		err := resetProgress(paths)
 		stopIfErrf("reset: %w", err)
 	}
