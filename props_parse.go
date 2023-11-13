@@ -53,6 +53,14 @@ func toInt(v string) int {
 	return i
 }
 
+func toFloat64(v string) float64 {
+	i, err := strconv.ParseFloat(v, 64)
+	if err != nil {
+		panic(fmt.Errorf("parseFloat64: %v: %w", v, err))
+	}
+	return i
+}
+
 func shouldExist(path string, m map[string]string, key string) {
 	if _, ok := m[key]; !ok {
 		fmt.Printf("no %v in %v\n%v", key, path, m)

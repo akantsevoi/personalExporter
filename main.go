@@ -19,11 +19,13 @@ type Command string
 const (
 	commandReport Command = "report"
 	commandReset  Command = "reset"
+	commandStat   Command = "stat"
 )
 
 var allCommands = []Command{
 	commandReport,
 	commandReset,
+	commandStat,
 }
 
 func main() {
@@ -32,6 +34,7 @@ func main() {
 	sourcePath := flag.String("source", "", "path to the root folder of projects")
 	hoursPT := flag.Float64("hpert", 1.0, "hours per reported tomato")
 	writeFolder := flag.String("result", "", "where to save the result\nIf empty - it will be stored in the same folder as source")
+	lastDays := flag.Int("lDays", 7, "last days statistics")
 
 	flag.Parse()
 
@@ -46,13 +49,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	folderPath := *sourcePath
-
-	paths, err := markdownFilePaths(folderPath)
-	stopIfErrf("%w", err)
-
 	switch command {
 	case commandReport:
+		folderPath := *sourcePath
+		paths, err := markdownFilePaths(folderPath)
+		stopIfErrf("%w", err)
+
 		if len(*writeFolder) == 0 {
 			writeFolder = sourcePath
 		}
@@ -68,10 +70,17 @@ func main() {
 
 		writeCSVUpdateIfNeeded(time.Now().Format("2006-01-02"), *writeFolder, todayResults)
 	case commandReset:
+		folderPath := *sourcePath
+		paths, err := markdownFilePaths(folderPath)
+		stopIfErrf("%w", err)
+
 		fmt.Println("reset start...")
 		fmt.Println("project files:\t", folderPath)
-		err := resetProgress(paths)
+		err = resetProgress(paths)
 		stopIfErrf("reset: %w", err)
+	case commandStat:
+		err := stats("result.csv", *lastDays)
+		stopIfErrf("stat: %w", err)
 	}
 
 }
