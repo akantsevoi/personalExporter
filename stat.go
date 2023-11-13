@@ -8,6 +8,7 @@ import (
 	"strings"
 )
 
+// ignores last day as not relevant(incomplete)
 func stats(resultFilePath string, lastDays int) error {
 	originalFile, err := os.OpenFile(resultFilePath, os.O_RDONLY|os.O_CREATE|os.O_APPEND, 0644)
 	stopIfErrf("open originalfile err: %w", err)
@@ -26,7 +27,7 @@ func stats(resultFilePath string, lastDays int) error {
 
 	values := make([]float64, 0, lastDays)
 	var sum float64
-	for i := len(fileContent) - 1 - lastDays; i < len(fileContent); i++ {
+	for i := len(fileContent) - 1 - lastDays - 1; i < len(fileContent)-1; i++ {
 		var totalDay float64
 		for _, pjIndex := range projectIndexes {
 			totalDay += toFloat64(fileContent[i][pjIndex])
