@@ -133,9 +133,18 @@ func updateOriginal(date string, hoursPerTomato float64, properties []Properties
 	for _, k := range keysToReport {
 		index, ok := existingKeys[k]
 		if !ok {
+			// if it's a new key to report. It was not here before
+			// we also need to add empty data for this column, othervise CSV library doesn't work properly
+
+			// report data
 			index = len(existingKeys)
 			existingKeys[k] = index
 			original[0] = append(original[0], k)
+
+			// backfill the column
+			for backFillIndex := 1; backFillIndex < len(original); backFillIndex++ {
+				original[backFillIndex] = append(original[backFillIndex], "0.0")
+			}
 		}
 
 		newReportRow[index] = strconv.FormatFloat(float64(dataToReport[k])*hoursPerTomato, 'f', 1, 64)
