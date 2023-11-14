@@ -34,7 +34,10 @@ func main() {
 	sourcePath := flag.String("source", "", "path to the root folder of projects")
 	hoursPT := flag.Float64("hpert", 1.0, "hours per reported tomato")
 	writeFolder := flag.String("result", "", "where to save the result\nIf empty - it will be stored in the same folder as source")
+
+	// stat
 	lastDays := flag.Int("lDays", 7, "last days statistics")
+	statsFile := flag.String("sFile", "", "path to statistics file")
 
 	flag.Parse()
 
@@ -79,7 +82,11 @@ func main() {
 		err = resetProgress(paths)
 		stopIfErrf("reset: %w", err)
 	case commandStat:
-		err := stats("result.csv", *lastDays)
+		if len(*statsFile) == 0 {
+			fmt.Println("sFile is empty")
+			os.Exit(1)
+		}
+		err := stats(*statsFile, *lastDays)
 		stopIfErrf("stat: %w", err)
 	}
 
