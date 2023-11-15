@@ -60,8 +60,6 @@ func projectStats(resultFilePath string, projectName string) error {
 	fileContent, err := reader.ReadAll()
 	stopIfErrf("read csv lines: %#v", err)
 
-	_ = fileContent
-
 	var indexes columnIndexes
 	if ind := projectIndexes(fileContent[0], projectName); ind != nil {
 		indexes = *ind
