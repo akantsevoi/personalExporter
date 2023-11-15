@@ -36,8 +36,9 @@ func main() {
 	writeFolder := flag.String("result", "", "where to save the result\nIf empty - it will be stored in the same folder as source")
 
 	// stat
-	lastDays := flag.Int("lDays", 7, "last days statistics")
 	statsFile := flag.String("sFile", "", "path to statistics file")
+	lastDays := flag.Int("lDays", 7, "last days statistics")
+	projectName := flag.String("pName", "", "if not empty will be calculated stats for the whole project with subprojects")
 
 	flag.Parse()
 
@@ -86,8 +87,14 @@ func main() {
 			fmt.Println("sFile is empty")
 			os.Exit(1)
 		}
-		err := stats(*statsFile, *lastDays)
-		stopIfErrf("stat: %w", err)
+
+		if len(*projectName) == 0 {
+			err := stats(*statsFile, *lastDays)
+			stopIfErrf("stat: %w", err)
+		} else {
+			err := projectStats(*statsFile, *projectName)
+			stopIfErrf("projStat: %w", err)
+		}
 	}
 
 }

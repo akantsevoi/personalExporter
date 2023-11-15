@@ -51,6 +51,51 @@ func stats(resultFilePath string, lastDays int) error {
 
 	return nil
 }
+
+func projectStats(resultFilePath string, projectName string) error {
+	originalFile, err := os.OpenFile(resultFilePath, os.O_RDONLY|os.O_CREATE|os.O_APPEND, 0644)
+	stopIfErrf("open originalfile err: %w", err)
+
+	reader := csv.NewReader(originalFile)
+	fileContent, err := reader.ReadAll()
+	stopIfErrf("read csv lines: %#v", err)
+
+	_ = fileContent
+
+	var indexes columnIndexes
+	if ind := projectIndexes(fileContent[0], projectName); ind != nil {
+		indexes = *ind
+	} else {
+		return fmt.Errorf("no such project or format error")
+	}
+
+	total := 0.0
+	perSubTotal := []pair[string, float64]{}
+	for _, sp := range indexes.subProjs {
+		perSubTotal = append(perSubTotal, pair[string, float64]{
+			sp.First, 0.0,
+		})
+	}
+
+	for ri := 1; ri < len(fileContent); ri++ {
+		total += toFloat64(fileContent[ri][indexes.proj])
+
+		var resIndex int
+		for _, sp := range indexes.subProjs {
+			perSubTotal[resIndex].Second += toFloat64(fileContent[ri][sp.Second])
+			resIndex++
+		}
+	}
+
+	fmt.Println("proj:\t", projectName)
+	fmt.Println("total:\t", total)
+	for _, sT := range perSubTotal {
+		fmt.Println("\t", sT.First, "\t", sT.Second)
+	}
+
+	return nil
+}
+
 type columnIndexes struct {
 	proj     int
 	subProjs []pair[string, int]
