@@ -51,3 +51,42 @@ func stats(resultFilePath string, lastDays int) error {
 
 	return nil
 }
+type columnIndexes struct {
+	proj     int
+	subProjs []pair[string, int]
+}
+
+// returns nil if there is no such project
+func projectIndexes(headerRow []string, projectName string) *columnIndexes {
+	if len(headerRow) == 0 || len(projectName) == 0 {
+		return nil
+	}
+
+	mainProjectIndex := -1
+	var subProjectIndexes []pair[string, int]
+
+	for i, h := range headerRow {
+		if !strings.HasPrefix(h, projectName) {
+			continue
+		}
+
+		parts := strings.Split(h, ":")
+		switch len(parts) {
+		case 1:
+			mainProjectIndex = i
+		case 2:
+			subProjectIndexes = append(subProjectIndexes, pair[string, int]{parts[1], i})
+		default:
+			return nil
+		}
+	}
+
+	if mainProjectIndex == -1 {
+		return nil
+	}
+
+	return &columnIndexes{
+		proj:     mainProjectIndex,
+		subProjs: subProjectIndexes,
+	}
+}
