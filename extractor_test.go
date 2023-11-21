@@ -14,6 +14,25 @@ func TestExtractPropertiesFromFile(t *testing.T) {
 		expErr   *string
 	}{
 		{
+			label:    "project_with_subprojects_extra_props",
+			filePath: "test_files/projectWithSubprojects_extra_props.md",
+			expProps: &Properties{
+				DoneTotal:      2,
+				ReportKey:      "repKeySub",
+				Status:         "hold",
+				Priority:       2,
+				TomatoesPerDay: 8,
+				Done: map[string]int{
+					"myProj1": 1,
+					"myProj2": 1,
+					"other":   0,
+				},
+				OtherProps: []pair[string, string]{
+					{"workIfTrue", "(new Date()).getDay() == 6"},
+				},
+			},
+		},
+		{
 			label:    "project_with_subprojects",
 			filePath: "test_files/projectWithSubprojects.md",
 			expProps: &Properties{
@@ -39,6 +58,9 @@ func TestExtractPropertiesFromFile(t *testing.T) {
 				Priority:       3,
 				TomatoesPerDay: 2,
 				Done:           make(map[string]int),
+				OtherProps: []pair[string, string]{
+					{"pageType", "project"},
+				},
 			},
 		},
 		{

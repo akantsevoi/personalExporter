@@ -16,6 +16,7 @@ type Properties struct {
 	Priority       int
 	DoneTotal      int
 	Done           map[string]int
+	OtherProps     []pair[string, string]
 }
 
 // checks if file has FrontMatter properties

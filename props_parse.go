@@ -13,28 +13,28 @@ const (
 )
 
 func mapToProperties(input map[string]string) *Properties {
-
 	pr := Properties{
-		ReportKey:      input["reportKey"],
-		Priority:       toInt(input["priority"]),
-		Status:         input["status"],
-		TomatoesPerDay: toInt(input["tomatosPerDay"]),
-		Done:           map[string]int{},
+		Done: make(map[string]int),
 	}
 
-	if v, ok := input["doneToday"]; ok {
-		pr.DoneTotal = toInt(v)
-	} else {
-		for k, v := range input {
-			name, hasSuffix := strings.CutSuffix(k, suffix)
-			if !hasSuffix {
-				continue
-			}
-
+	for k, v := range input {
+		name, hasSuffix := strings.CutSuffix(k, suffix)
+		if hasSuffix {
 			increment := toInt(v)
 			pr.DoneTotal += increment
 			pr.Done[name] = increment
-
+		} else if k == "doneToday" {
+			pr.DoneTotal = toInt(v)
+		} else if k == "reportKey" {
+			pr.ReportKey = input["reportKey"]
+		} else if k == "priority" {
+			pr.Priority = toInt(input["priority"])
+		} else if k == "status" {
+			pr.Status = input["status"]
+		} else if k == "tomatosPerDay" {
+			pr.TomatoesPerDay = toInt(input["tomatosPerDay"])
+		} else {
+			pr.OtherProps = append(pr.OtherProps, pair[string, string]{k, v})
 		}
 	}
 
