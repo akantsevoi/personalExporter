@@ -28,6 +28,7 @@ func TestExtractPropertiesFromFile(t *testing.T) {
 					"other":   0,
 				},
 				OtherProps: []pair[string, string]{
+					{"pageType", "project"},
 					{"workIfTrue", "(new Date()).getDay() == 6"},
 				},
 			},

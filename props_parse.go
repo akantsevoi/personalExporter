@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -41,6 +42,10 @@ func mapToProperties(input map[string]string) *Properties {
 	if pr.DoneTotal == 0 {
 		return nil
 	}
+
+	sort.Slice(pr.OtherProps, func(i, j int) bool {
+		return pr.OtherProps[i].First < pr.OtherProps[j].First
+	})
 
 	return &pr
 }

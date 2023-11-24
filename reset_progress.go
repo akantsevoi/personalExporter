@@ -43,7 +43,6 @@ func fileContent(path string) (string, error) {
 
 func resetedStringProps(props *Properties) string {
 	res := fmt.Sprintf(`
-pageType: project
 status: %v
 tomatosPerDay: %v
 reportKey: %v
@@ -57,6 +56,10 @@ priority: %v
 		for _, k := range sortedKeys(props.Done) {
 			res += fmt.Sprintf("%s_sub_done_today: 0\n", k)
 		}
+	}
+
+	for _, p := range props.OtherProps {
+		res += fmt.Sprintf("%s: %s\n", p.First, p.Second)
 	}
 
 	return res

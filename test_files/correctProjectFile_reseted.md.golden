@@ -1,10 +1,10 @@
 ---
-pageType: project
 status: progress
 tomatosPerDay: 2
 reportKey: repKey1
 priority: 3
 doneToday: 0
+pageType: project
 ---
 
 Bla bla bla content

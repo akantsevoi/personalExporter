@@ -42,6 +42,18 @@ func TestResetProgress(t *testing.T) {
 		require.Equal(t, expected, result)
 	})
 
+	t.Run("reset_subproject_file_with_some_extra_props", func(t *testing.T) {
+		copyFile(t, "test_files/projectWithSubprojects_extra_props.md", testFolderPath+"projectWithSubprojects_extra_props.md")
+		err := resetProgress([]string{
+			testFolderPath + "projectWithSubprojects_extra_props.md",
+		})
+		require.NoError(t, err)
+
+		result := helperFileContent(t, testFolderPath+"projectWithSubprojects_extra_props.md")
+		expected := helperFileContent(t, "test_files/projectWithSubprojects_reseted_extra_props.md.golden")
+		require.Equal(t, expected, result)
+	})
+
 	t.Run("clean_up", func(t *testing.T) {
 		err := os.RemoveAll(testFolderPath)
 		require.NoError(t, err)
